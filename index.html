@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LMelo Tech | Auditoria Contínua & Data Analytics</title>
+<meta name="description" content="Consultoria em automação de auditoria e monitoramento contínuo. Testes e controles rodando sobre 100% dos dados — sem amostragem.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0B1740;          /* navy / brand */
+    --ink-2:#15224f;
+    --ink-3:#1d2c61;
+    --pink:#E8175A;
+    --pink-dk:#c4104a;
+    --pink-soft:rgba(232,23,90,.10);
+    --paper:#F3F0E8;        /* warm editorial paper */
+    --paper-2:#EAE5D9;      /* deeper band */
+    --card:#FCFBF7;
+    --white:#ffffff;
+    --muted:#565d72;
+    --muted-2:#828aa1;
+    --line:rgba(11,23,64,.14);
+    --line-soft:rgba(11,23,64,.08);
+    --serif:'Libre Baskerville',Georgia,serif;
+    --sans:'IBM Plex Sans',system-ui,sans-serif;
+    --mono:'IBM Plex Mono',ui-monospace,monospace;
+    --nav-h:72px;
+    --max:1200px;
+  }
+
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;scroll-padding-top:108px;}
+  body{
+    font-family:var(--sans); color:var(--ink); background:var(--paper);
+    -webkit-font-smoothing:antialiased; overflow-x:hidden; max-width:100vw;
+    line-height:1.6; overflow-wrap:break-word; word-wrap:break-word;
+    background-image:radial-gradient(rgba(11,23,64,.045) 1px, transparent 1px);
+    background-size:24px 24px;
+  }
+  a{text-decoration:none;color:inherit;}
+  img{max-width:100%;display:block;}
+  ::selection{background:var(--pink);color:#fff;}
+
+  .wrap{max-width:var(--max);margin:0 auto;padding:0 32px;width:100%;}
+
+  /* ── shared type ─────────────────────────────────────── */
+  .kicker{
+    font-family:var(--mono); font-size:.72rem; font-weight:500;
+    letter-spacing:.22em; text-transform:uppercase; color:var(--pink);
+    display:inline-flex; align-items:center;
+  }
+  .kicker.on-dark{color:#ff5d8a;}
+  .display{
+    font-family:var(--serif); font-weight:700; color:var(--ink);
+    line-height:1.08; letter-spacing:-.02em;
+  }
+  .display em{font-style:italic;color:var(--pink);font-weight:400;}
+  .lead{font-size:1.06rem;line-height:1.75;color:var(--muted);}
+  .eyebrow{font-family:var(--mono);font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted-2);}
+
+  .btn{
+    display:inline-flex;align-items:center;gap:9px;
+    padding:13px 26px;border-radius:2px;border:none;cursor:pointer;
+    font-family:var(--mono); font-size:.8rem; font-weight:500;
+    letter-spacing:.06em; text-transform:uppercase; transition:all .2s ease;
+  }
+  .btn-fill{background:var(--pink);color:#fff;}
+  .btn-fill:hover{background:var(--pink-dk);transform:translateY(-2px);box-shadow:0 10px 26px rgba(232,23,90,.32);}
+  .btn-line{background:transparent;color:var(--ink);border:1.5px solid var(--ink);}
+  .btn-line:hover{background:var(--ink);color:#fff;}
+  .btn-line.on-dark{color:#fff;border-color:rgba(255,255,255,.35);}
+  .btn-line.on-dark:hover{background:#fff;color:var(--ink);border-color:#fff;}
+  .btn svg{width:15px;height:15px;}
+
+  /* ── nav (fixed glass bar) ───────────────────────────── */
+  .nav{position:fixed;top:0;left:0;right:0;z-index:300;padding:20px 30px;}
+  .nav-w{
+    width:100%;max-width:1400px;margin:0 auto;
+    display:flex;align-items:center;justify-content:space-between;gap:24px;
+    padding:15px 28px;border-radius:26px;
+    background:rgba(19,14,40,.5);
+    border:1px solid rgba(255,255,255,.10);
+    -webkit-backdrop-filter:blur(22px) saturate(1.4);backdrop-filter:blur(22px) saturate(1.4);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.06), 0 12px 40px rgba(5,5,25,.26);
+    transition:background .25s,border-color .25s,box-shadow .25s;
+  }
+  .nav.scrolled .nav-w{background:rgba(14,9,32,.7);border-color:rgba(255,255,255,.12);box-shadow:inset 0 1px 0 rgba(255,255,255,.06), 0 16px 46px rgba(5,5,25,.42);}
+  .brand{display:flex;align-items:center;gap:12px;}
+  .brand img{height:38px;width:auto;}
+  .nav-links{display:flex;align-items:center;gap:38px;}
+  .nav-links a{position:relative;color:rgba(255,255,255,.88);font-size:16px;font-weight:500;transition:.25s ease;}
+  .nav-links a::after{content:'';position:absolute;left:0;bottom:-8px;width:0;height:2px;background:var(--pink);border-radius:10px;transition:.3s ease;}
+  .nav-links a:hover{color:#fff;}
+  .nav-links a:hover::after{width:100%;}
+  .actions{display:flex;align-items:center;gap:14px;}
+  .nav-cta{
+    background:linear-gradient(180deg,#ff2d74 0%,#e8175a 100%);
+    color:#fff !important;padding:14px 26px;border-radius:14px;font-size:16px;font-weight:600;
+    box-shadow:0 10px 25px rgba(232,23,90,.35), inset 0 1px 0 rgba(255,255,255,.2);
+    transition:.25s ease;white-space:nowrap;
+  }
+  .nav-cta:hover{transform:translateY(-2px);box-shadow:0 14px 35px rgba(232,23,90,.45), inset 0 1px 0 rgba(255,255,255,.2);}
+  .nav-burger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:6px;}
+  .nav-burger span{width:26px;height:2px;background:#fff;border-radius:2px;transition:.25s;}
+  .nav-burger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+  .nav-burger.open span:nth-child(2){opacity:0;}
+  .nav-burger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+  @media(max-width:1100px){
+    .nav-links{gap:26px;}
+    .nav-links a{font-size:15px;}
+    .nav-cta{padding:12px 20px;font-size:15px;}
+  }
+  @media(max-width:900px){
+    .nav-burger{display:flex;}
+    .nav-links{
+      position:fixed;top:88px;left:20px;right:20px;
+      flex-direction:column;align-items:stretch;gap:4px;padding:14px;
+      background:rgba(14,9,32,.82);border:1px solid rgba(255,255,255,.12);border-radius:18px;
+      -webkit-backdrop-filter:blur(22px);backdrop-filter:blur(22px);
+      box-shadow:0 24px 50px rgba(5,5,25,.5);
+      transform:translateY(-14px);opacity:0;pointer-events:none;transition:transform .28s ease,opacity .28s ease;
+    }
+    .nav-links.open{transform:translateY(0);opacity:1;pointer-events:auto;}
+    .nav-links a{font-size:16px;padding:13px 16px;border-radius:10px;}
+    .nav-links a::after{display:none;}
+    .nav-links a:hover{background:rgba(255,255,255,.06);}
+  }
+  @media(max-width:480px){
+    .nav{padding:14px 16px;}
+    .nav-w{padding:12px 14px 12px 18px;}
+    .nav-cta{padding:11px 16px;font-size:14px;}
+    .nav-links{top:80px;}
+  }
+
+  /* ── hero (dark, centered) ───────────────────────────── */
+  .hero{
+    position:relative;overflow:hidden;text-align:center;padding:88px 0 0;
+    background:
+      radial-gradient(ellipse 46% 34% at 50% 109%, rgba(255,86,150,.70), transparent 55%),
+      radial-gradient(ellipse 70% 50% at 50% 116%, rgba(150,72,250,.58), transparent 64%),
+      radial-gradient(ellipse 108% 70% at 50% -6%, rgba(86,64,224,.55), transparent 60%),
+      radial-gradient(ellipse 55% 48% at 14% 2%, rgba(138,46,196,.38), transparent 58%),
+      radial-gradient(ellipse 55% 48% at 86% 2%, rgba(86,56,222,.38), transparent 58%),
+      linear-gradient(180deg,#0a0820 0%,#160a44 44%,#0c1244 100%);
+  }
+  .hero-stars{position:absolute;top:-90px;bottom:-90px;left:-12px;right:-12px;will-change:transform;background-image:linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px);background-size:46px 46px;opacity:.6;filter:blur(2px);-webkit-mask-image:radial-gradient(ellipse 80% 60% at 50% 28%,#000,transparent 72%);mask-image:radial-gradient(ellipse 80% 60% at 50% 28%,#000,transparent 72%);pointer-events:none;}
+  .hero-inner{position:relative;z-index:2;max-width:880px;margin:0 auto;padding:40px 32px 0;}
+  .hero-badge{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:.67rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.72);border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.05);padding:9px 18px;border-radius:999px;backdrop-filter:blur(6px);}
+  .hero h1{font-family:var(--serif);font-weight:700;font-size:clamp(2.05rem,6vw,4.85rem);line-height:1.06;letter-spacing:-.02em;color:#efeaf7;margin:30px auto 24px;max-width:15ch;}
+  .hero h1 em{font-style:italic;color:var(--pink);font-weight:400;}
+  .hero-sub{font-size:1.08rem;line-height:1.72;color:rgba(255,255,255,.6);max-width:560px;margin:0 auto 38px;}
+  .hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+  .hero .btn{font-family:var(--sans);font-size:16px;font-weight:600;letter-spacing:0;text-transform:none;padding:15px 30px;border-radius:14px;}
+  .hero .btn-fill{
+    background:linear-gradient(180deg,#ff2d74 0%,#e8175a 100%);color:#fff;
+    box-shadow:0 12px 30px rgba(232,23,90,.4), inset 0 1px 0 rgba(255,255,255,.25);
+  }
+  .hero .btn-fill:hover{background:linear-gradient(180deg,#ff2d74 0%,#e8175a 100%);transform:translateY(-2px);box-shadow:0 16px 42px rgba(232,23,90,.52), inset 0 1px 0 rgba(255,255,255,.25);}
+  .hero-ghost{
+    background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.22);color:#fff;
+    -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.18);
+  }
+  .hero-ghost:hover{background:rgba(255,255,255,.15);transform:translateY(-2px);box-shadow:0 12px 30px rgba(5,5,25,.3), inset 0 1px 0 rgba(255,255,255,.22);}
+  .hero-proof{margin-top:46px;display:flex;flex-direction:column;align-items:center;gap:16px;}
+  .hero-proof-line{font-family:var(--mono);font-size:.73rem;letter-spacing:.05em;color:rgba(255,255,255,.5);}
+  .hero-proof-line b{color:rgba(255,255,255,.88);font-weight:600;}
+  .hero-feats{display:flex;gap:28px;flex-wrap:wrap;justify-content:center;}
+  .hero-feat{display:inline-flex;align-items:center;gap:9px;font-size:.85rem;color:rgba(255,255,255,.72);}
+  .hero-feat svg{width:17px;height:17px;color:var(--pink);}
+
+  /* hero dashboard preview */
+  .hero-app-wrap{position:relative;max-width:1080px;margin:64px auto 0;padding:0 24px;max-height:440px;overflow:hidden;-webkit-mask-image:linear-gradient(180deg,#000 76%,transparent);mask-image:linear-gradient(180deg,#000 76%,transparent);}
+  .hero-app-glow{position:absolute;left:50%;top:-30px;transform:translateX(-50%);width:72%;height:260px;background:radial-gradient(ellipse at center,rgba(232,23,90,.55),transparent 70%);filter:blur(46px);pointer-events:none;}
+  .hero-app{position:relative;z-index:1;background:#fff;border:1px solid rgba(255,255,255,.4);border-radius:14px 14px 0 0;overflow:hidden;box-shadow:0 -8px 60px rgba(232,23,90,.1),0 34px 90px -24px rgba(0,0,0,.55);text-align:left;}
+  .app-top{display:flex;align-items:center;gap:14px;padding:13px 18px;background:var(--ink);color:#fff;font-size:.78rem;}
+  .app-top .bars{display:inline-flex;gap:3px;align-items:flex-end;}
+  .app-top .bars i{width:3px;height:14px;background:var(--pink);border-radius:1px;opacity:.45;}
+  .app-top .bars i:nth-child(2){opacity:.75;} .app-top .bars i:nth-child(3){opacity:1;}
+  .app-top .trial{color:rgba(255,255,255,.72);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;} .app-top .trial b{color:#fff;font-weight:600;}
+  .app-top .up{margin-left:auto;background:var(--pink);color:#fff;font-size:.72rem;font-weight:600;padding:7px 14px;border-radius:6px;white-space:nowrap;}
+  .app-body{display:grid;grid-template-columns:228px 1fr;min-height:340px;}
+  .app-side{background:#f5f6fa;border-right:1px solid #e8eaf1;padding:18px 16px;}
+  .app-side .logo{width:30px;height:30px;border-radius:8px;background:var(--ink);display:flex;align-items:center;justify-content:center;color:var(--pink);font-size:.85rem;margin-bottom:18px;}
+  .app-new{display:flex;align-items:center;gap:8px;background:var(--ink);color:#fff;font-size:.8rem;font-weight:600;padding:10px 14px;border-radius:8px;margin-bottom:16px;}
+  .app-nav{display:flex;flex-direction:column;gap:3px;}
+  .app-nav a{display:flex;align-items:center;gap:11px;font-size:.82rem;color:#5a6075;padding:9px 12px;border-radius:8px;}
+  .app-nav a.active{background:#fff;color:var(--ink);font-weight:600;box-shadow:0 1px 3px rgba(11,23,64,.07);}
+  .app-nav a svg{width:16px;height:16px;flex-shrink:0;}
+  .app-main{padding:24px 26px;}
+  .app-main h5{font-family:var(--serif);font-weight:700;font-size:1.18rem;color:var(--ink);margin-bottom:4px;}
+  .app-main .sub{font-size:.8rem;color:#8a90a3;margin-bottom:22px;}
+  .app-rows{display:flex;flex-direction:column;gap:10px;}
+  .app-row{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:13px 16px;border:1px solid #ebedf3;border-radius:10px;background:#fff;}
+  .app-row .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+  .app-row .dot.r{background:var(--pink);} .app-row .dot.g{background:#22c55e;} .app-row .dot.a{background:#f59e0b;}
+  .app-row .info b{display:block;font-size:.85rem;color:var(--ink);font-weight:600;}
+  .app-row .info span{font-size:.75rem;color:#8a90a3;}
+  .app-row .tag{font-family:var(--mono);font-size:.65rem;letter-spacing:.04em;padding:4px 10px;border-radius:5px;white-space:nowrap;}
+  .app-row .tag.exc{background:var(--pink-soft);color:var(--pink-dk);}
+  .app-row .tag.ok{background:rgba(34,197,94,.1);color:#16a34a;}
+
+  /* ── section scaffold ────────────────────────────────── */
+  section{padding:104px 0;}
+  .sec-head{max-width:680px;margin-bottom:60px;}
+  .sec-head h2{font-size:clamp(1.9rem,3.6vw,2.9rem);margin-top:20px;}
+  .sec-head p{margin-top:18px;}
+
+  /* ── services ────────────────────────────────────────── */
+  .svc-list{border-top:1px solid var(--line);}
+  .svc-row{
+    display:grid;grid-template-columns:84px 1fr 1.1fr 44px;gap:32px;align-items:center;
+    padding:36px 0;border-bottom:1px solid var(--line);position:relative;
+  }
+  .svc-row::before{content:'';position:absolute;left:-24px;right:-24px;top:0;bottom:0;background:var(--ink);opacity:0;transition:opacity .4s ease;z-index:0;border-radius:4px;}
+  .svc-row > *{position:relative;z-index:1;}
+  .svc-n{font-family:var(--serif);font-weight:700;font-size:3rem;line-height:1;color:var(--ink);letter-spacing:-.03em;transition:color .4s ease;}
+  .svc-t{font-family:var(--serif);font-weight:700;font-size:1.22rem;line-height:1.28;color:var(--ink);transition:color .4s ease;}
+  .svc-d{font-size:.93rem;line-height:1.7;color:var(--muted);transition:color .4s ease;}
+  .svc-arrow{justify-self:end;width:42px;height:42px;border:1.5px solid var(--line);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--ink);transition:all .4s ease;}
+  .svc-arrow svg{width:17px;height:17px;}
+  .svc-row:hover::before{opacity:1;}
+  .svc-row:hover .svc-n{color:var(--pink);}
+  .svc-row:hover .svc-t{color:#fff;}
+  .svc-row:hover .svc-d{color:rgba(255,255,255,.6);}
+  .svc-row:hover .svc-arrow{background:var(--pink);border-color:var(--pink);color:#fff;transform:rotate(-45deg);}
+
+  /* ── methodology ─────────────────────────────────────── */
+  .method-sec{background:var(--paper-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+  .method-head{text-align:center;max-width:620px;margin:0 auto 64px;}
+  .method-head .kicker{justify-content:center;display:inline-flex;}
+  .method-head h2{font-size:clamp(1.9rem,3.6vw,2.9rem);margin-top:18px;}
+  .method-head p{margin-top:16px;}
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:0;position:relative;}
+  .steps::before{content:'';position:absolute;top:30px;left:16.6%;right:16.6%;height:1px;background:var(--line);}
+  .step{text-align:center;padding:0 22px;position:relative;}
+  .step-n{
+    width:60px;height:60px;border-radius:50%;margin:0 auto 22px;
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--serif);font-weight:700;font-size:1.2rem;
+    background:var(--paper-2);border:1.5px solid var(--line);color:var(--ink);transition:all .25s;
+  }
+  .step.hi .step-n{background:var(--pink);border-color:var(--pink);color:#fff;box-shadow:0 8px 22px rgba(232,23,90,.3);}
+  .step:hover .step-n{background:var(--ink);border-color:var(--ink);color:#fff;}
+  .step.hi:hover .step-n{background:var(--pink);border-color:var(--pink);}
+  .step h4{font-family:var(--serif);font-weight:700;font-size:1.15rem;color:var(--ink);margin-bottom:12px;}
+  .step p{font-size:.9rem;line-height:1.65;color:var(--muted);margin-bottom:18px;}
+  .step-items{display:inline-flex;flex-direction:column;gap:8px;text-align:left;}
+  .step-items span{font-family:var(--mono);font-size:.74rem;color:var(--ink);display:flex;align-items:center;gap:9px;}
+  .step-items span::before{content:'';width:6px;height:6px;background:var(--pink);flex-shrink:0;transform:rotate(45deg);}
+
+  /* ── tech strip ──────────────────────────────────────── */
+  .strip{padding:78px 0;text-align:center;border-bottom:1px solid var(--line);}
+  .strip h3{font-family:var(--serif);font-weight:700;font-size:clamp(1.5rem,2.6vw,2.1rem);color:var(--ink);letter-spacing:-.015em;margin-bottom:34px;}
+  .strip-row{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:2px;max-width:var(--max);margin:0 auto;}
+  .strip-row .cl{display:inline-flex;align-items:center;gap:8px;padding:11px 15px;border-radius:10px;font-family:var(--mono);font-weight:500;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink);position:relative;transition:background .22s,color .22s;}
+  .strip-row .cl svg{width:16px;height:16px;color:var(--pink);opacity:.65;transition:opacity .22s;}
+  .strip-row .cl:not(:last-child)::after{content:'';position:absolute;right:-2px;top:50%;transform:translateY(-50%);width:1px;height:18px;background:var(--line);transition:opacity .22s;}
+  .strip-row .cl:hover,.strip-row .cl.active{background:var(--pink-soft);color:var(--pink);}
+  .strip-row .cl:hover svg,.strip-row .cl.active svg{opacity:1;}
+  .strip-row .cl:hover::after,.strip-row .cl.active::after{opacity:0;}
+  @media(max-width:680px){
+    .strip-row{gap:6px;border:none;background:transparent;padding:0;}
+    .strip-row .cl{border:1px solid var(--line);background:var(--card);}
+    .strip-row .cl::after{display:none;}
+  }
+
+  /* ── trainings (dark) ────────────────────────────────── */
+  .train-sec{
+    color:#fff;position:relative;overflow:hidden;
+    background:
+      radial-gradient(ellipse 64% 46% at 50% -8%, rgba(150,72,250,.46), transparent 62%),
+      radial-gradient(ellipse 52% 42% at 88% 2%, rgba(255,86,150,.32), transparent 60%),
+      radial-gradient(ellipse 58% 50% at 10% 6%, rgba(124,52,204,.30), transparent 60%),
+      linear-gradient(180deg,#0d0a30 0%,#120a3c 42%,#0b1240 100%);
+  }
+  .train-grid{position:absolute;top:-90px;bottom:-90px;left:-12px;right:-12px;z-index:0;will-change:transform;background:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:44px 44px;filter:blur(2px);opacity:.85;-webkit-mask-image:linear-gradient(180deg,#000 0%,rgba(0,0,0,.4) 55%,transparent 90%);mask-image:linear-gradient(180deg,#000 0%,rgba(0,0,0,.4) 55%,transparent 90%);pointer-events:none;}
+  /* subtle film grain */
+  .grain{position:fixed;inset:0;z-index:60;pointer-events:none;opacity:.05;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:160px 160px;}
+  @media(prefers-reduced-motion:reduce){.hero-stars,.train-grid{transform:none !important;}}
+  .train-sec .wrap{position:relative;z-index:1;}
+  .train-sec h2{color:#fff;}
+  .train-head{max-width:680px;margin-bottom:30px;}
+  .train-head h2{font-size:clamp(1.9rem,3.6vw,2.9rem);margin-top:20px;}
+  .train-head p{margin-top:18px;color:rgba(255,255,255,.6);}
+  .pill-row{display:flex;flex-wrap:wrap;gap:9px;margin:26px 0 64px;}
+  .pill{font-family:var(--mono);font-size:.72rem;letter-spacing:.03em;color:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.16);border-radius:2px;padding:7px 14px;}
+
+  .block-title{font-family:var(--serif);font-weight:700;font-size:1.5rem;color:#fff;margin-bottom:28px;display:flex;align-items:baseline;gap:14px;}
+  .block-title .idx{font-family:var(--mono);font-size:.8rem;color:var(--pink);letter-spacing:.1em;}
+
+  .method-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:84px;}
+  .mcard{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:26px;transition:background .22s,border-color .22s,transform .22s;}
+  .mcard:hover{background:rgba(255,255,255,.07);border-color:rgba(232,23,90,.4);transform:translateY(-4px);}
+  .mcard-ic{width:44px;height:44px;border-radius:8px;background:var(--pink-soft);color:var(--pink);display:flex;align-items:center;justify-content:center;margin-bottom:18px;}
+  .mcard-ic svg{width:23px;height:23px;}
+  .mcard h4{font-family:var(--serif);font-weight:700;font-size:1.02rem;color:#fff;margin-bottom:9px;line-height:1.3;}
+  .mcard p{font-size:.86rem;line-height:1.62;color:rgba(255,255,255,.55);}
+
+  /* modules accordion */
+  .modules{display:flex;flex-direction:column;gap:14px;margin-bottom:60px;}
+  .mod{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:6px;overflow:hidden;transition:background .2s,border-color .2s;}
+  .mod:hover{background:rgba(255,255,255,.06);border-color:rgba(232,23,90,.28);}
+  .mod-head{display:grid;grid-template-columns:auto 1fr auto;gap:24px;align-items:center;padding:22px 26px;cursor:pointer;user-select:none;}
+  .mod-tags{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+  .mod-code{font-family:var(--mono);font-size:.72rem;color:rgba(255,255,255,.4);letter-spacing:.05em;}
+  .badge{font-family:var(--mono);font-size:.64rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;padding:4px 11px;border-radius:2px;}
+  .badge.basic{background:rgba(74,222,128,.12);color:#6ee7a0;border:1px solid rgba(74,222,128,.25);}
+  .badge.mid{background:var(--pink-soft);color:#ff6b97;border:1px solid rgba(232,23,90,.3);}
+  .badge.adv{background:rgba(167,139,250,.12);color:#c4b5fd;border:1px solid rgba(167,139,250,.28);}
+  .mod-title h4{font-family:var(--serif);font-weight:700;font-size:1.06rem;color:#fff;margin-bottom:5px;line-height:1.3;}
+  .mod-title p{font-size:.82rem;color:rgba(255,255,255,.5);line-height:1.5;}
+  .mod-meta{display:flex;align-items:center;gap:14px;flex-shrink:0;}
+  .mod-hours{font-family:var(--mono);font-size:.7rem;color:rgba(255,255,255,.6);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);padding:5px 12px;border-radius:20px;white-space:nowrap;}
+  .mod-tog{width:32px;height:32px;border-radius:6px;border:1.5px solid rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;font-size:1rem;color:rgba(255,255,255,.55);transition:all .22s;flex-shrink:0;}
+  .mod.open .mod-tog{background:var(--pink);border-color:var(--pink);color:#fff;transform:rotate(45deg);}
+  .mod-body{max-height:0;overflow:hidden;transition:max-height .42s ease;}
+  .mod-body.open{max-height:920px;}
+  .mod-inner{display:grid;grid-template-columns:1fr 1fr;gap:36px;padding:6px 26px 28px;border-top:1px solid rgba(255,255,255,.08);padding-top:24px;}
+  .mod-sub{font-family:var(--mono);font-size:.66rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#ff6b97;margin-bottom:15px;}
+  .mod-topics{list-style:none;display:flex;flex-direction:column;gap:10px;}
+  .mod-topics li{display:flex;gap:11px;font-size:.86rem;color:rgba(255,255,255,.72);line-height:1.55;}
+  .mod-topics li::before{content:'';width:6px;height:6px;background:var(--pink);flex-shrink:0;margin-top:7px;transform:rotate(45deg);}
+  .mod-out{display:flex;flex-direction:column;gap:10px;}
+  .mod-out div{display:flex;gap:11px;font-size:.86rem;color:rgba(255,255,255,.72);line-height:1.55;}
+  .mod-out div span{color:#6ee7a0;font-weight:700;flex-shrink:0;}
+  .mod-pre{margin-top:18px;padding:13px 16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:4px;font-size:.8rem;color:rgba(255,255,255,.55);}
+  .mod-pre strong{color:#fff;font-weight:600;}
+
+  .train-cta{display:flex;align-items:center;justify-content:center;gap:24px;flex-wrap:wrap;text-align:center;border-top:1px solid rgba(255,255,255,.1);padding-top:48px;margin-top:8px;}
+  .train-cta p{font-family:var(--serif);font-style:italic;font-size:1.18rem;color:#fff;}
+
+  /* ── differentials ───────────────────────────────────── */
+  .diff-sec{background:var(--paper-2);border-top:1px solid var(--line);}
+  .diff-layout{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start;}
+  .acc-head{margin-bottom:34px;}
+  .acc-head h2{font-size:clamp(1.8rem,3.2vw,2.6rem);margin-top:18px;}
+  .acc-item{border-bottom:1px solid var(--line);}
+  .acc-btn{width:100%;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:22px 0;text-align:left;font-family:var(--serif);font-weight:700;font-size:1.04rem;color:var(--ink);transition:color .18s;}
+  .acc-btn:hover,.acc-btn.open{color:var(--pink);}
+  .acc-chev{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.7rem;color:var(--ink);transition:all .25s;}
+  .acc-btn.open .acc-chev{background:var(--pink);border-color:var(--pink);color:#fff;transform:rotate(180deg);}
+  .acc-body{max-height:0;overflow:hidden;transition:max-height .4s ease;}
+  .acc-body.open{max-height:340px;}
+  .acc-inner{padding:0 0 24px;}
+  .acc-inner p{font-size:.92rem;line-height:1.75;color:var(--muted);}
+  .acc-inner ul{list-style:none;display:flex;flex-direction:column;gap:9px;}
+  .acc-inner li{display:flex;gap:11px;font-size:.9rem;color:#454d66;line-height:1.55;}
+  .acc-inner li::before{content:'';width:6px;height:6px;background:var(--pink);flex-shrink:0;margin-top:7px;transform:rotate(45deg);}
+  .diffs-frame{position:sticky;top:calc(var(--nav-h) + 28px);background:var(--ink);border-radius:8px;padding:38px;box-shadow:0 30px 70px -30px rgba(11,23,64,.5);overflow:hidden;}
+  .diffs-frame::before{content:'';position:absolute;inset:0;background:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);background-size:34px 34px;pointer-events:none;}
+  .diffs-frame > *{position:relative;z-index:1;}
+  .diffs-frame h4{font-family:var(--serif);font-weight:700;font-size:1.1rem;color:#fff;margin-bottom:26px;}
+  .drow{display:flex;gap:15px;align-items:flex-start;padding:14px 0;border-top:1px solid rgba(255,255,255,.07);}
+  .drow:first-of-type{border-top:none;}
+  .ddot{width:36px;height:36px;border-radius:8px;background:var(--pink-soft);color:var(--pink);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .ddot svg{width:18px;height:18px;}
+  .drow strong{display:block;font-size:.9rem;font-weight:600;color:#fff;margin-bottom:3px;}
+  .drow span{font-size:.8rem;color:rgba(255,255,255,.5);line-height:1.5;}
+
+  /* ── clients ─────────────────────────────────────────── */
+  .clients-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:28px 20px;}
+  .client{flex:1 1 180px;max-width:230px;padding:18px;display:flex;flex-direction:column;align-items:center;gap:18px;text-align:center;transition:transform .3s ease;}
+  .client:hover{transform:translateY(-4px);}
+  .client-logo{height:50px;display:flex;align-items:center;justify-content:center;}
+  .client-logo img{max-height:46px;width:auto;object-fit:contain;mix-blend-mode:multiply;opacity:.78;transition:opacity .22s;}
+  .client:hover .client-logo img{opacity:1;}
+  .client-name{font-family:var(--mono);font-size:.72rem;letter-spacing:.03em;color:var(--muted);line-height:1.4;}
+
+  /* ── cta band ────────────────────────────────────────── */
+  .cta-sec{
+    color:#fff;position:relative;overflow:hidden;text-align:center;
+    background:
+      radial-gradient(ellipse 52% 56% at 50% 118%, rgba(255,86,150,.50), transparent 60%),
+      radial-gradient(ellipse 74% 64% at 50% -22%, rgba(150,72,250,.46), transparent 64%),
+      radial-gradient(ellipse 50% 60% at 10% 50%, rgba(124,52,204,.26), transparent 62%),
+      linear-gradient(180deg,#0c0a2c 0%,#150a42 50%,#0c1240 100%);
+  }
+  .cta-w{max-width:720px;margin:0 auto;position:relative;z-index:1;}
+  .cta-w .kicker{justify-content:center;display:inline-flex;margin-bottom:18px;}
+  .cta-w h2{font-size:clamp(2rem,4vw,3.2rem);color:#fff;margin-bottom:20px;}
+  .cta-w p{color:rgba(255,255,255,.62);font-size:1.05rem;line-height:1.75;margin-bottom:36px;}
+  .cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+  .cta-sec .btn{font-family:var(--sans);font-size:16px;font-weight:600;letter-spacing:0;text-transform:none;padding:15px 30px;border-radius:14px;}
+  .cta-sec .btn-fill{
+    background:linear-gradient(180deg,#ff2d74 0%,#e8175a 100%);color:#fff;
+    box-shadow:0 12px 30px rgba(232,23,90,.4), inset 0 1px 0 rgba(255,255,255,.25);
+  }
+  .cta-sec .btn-fill:hover{background:linear-gradient(180deg,#ff2d74 0%,#e8175a 100%);transform:translateY(-2px);box-shadow:0 16px 42px rgba(232,23,90,.52), inset 0 1px 0 rgba(255,255,255,.25);}
+  .cta-sec .btn-line{
+    background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.22);color:#fff;
+    -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.18);
+  }
+  .cta-sec .btn-line:hover{background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.3);transform:translateY(-2px);box-shadow:0 12px 30px rgba(5,5,25,.3), inset 0 1px 0 rgba(255,255,255,.22);}
+
+  /* ── faq ─────────────────────────────────────────────── */
+  .faq-sec{background:var(--paper-2);border-top:1px solid var(--line);}
+  .faq-layout{display:grid;grid-template-columns:1fr 1.7fr;gap:70px;align-items:start;}
+  .faq-left{position:sticky;top:calc(var(--nav-h) + 28px);}
+  .faq-left h2{font-size:clamp(1.8rem,3.2vw,2.5rem);margin-top:18px;}
+  .faq-left p{margin-top:18px;color:var(--muted);font-size:.94rem;}
+  .faq-left a.link{display:inline-flex;align-items:center;gap:7px;margin-top:10px;font-family:var(--mono);font-size:.78rem;color:var(--pink);letter-spacing:.04em;}
+  .faq-left a.link:hover{text-decoration:underline;}
+  .faq-item{border-bottom:1px solid var(--line);}
+  .faq-btn{width:100%;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:22px 0;text-align:left;font-family:var(--sans);font-weight:500;font-size:1rem;color:var(--ink);}
+  .faq-ic{width:26px;height:26px;border-radius:50%;background:var(--card);border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.05rem;color:var(--ink);transition:all .25s;}
+  .faq-btn.open .faq-ic{background:var(--pink);border-color:var(--pink);color:#fff;transform:rotate(45deg);}
+  .faq-body{max-height:0;overflow:hidden;transition:max-height .4s ease;}
+  .faq-body.open{max-height:260px;}
+  .faq-body p{padding:0 0 22px;font-size:.92rem;line-height:1.78;color:var(--muted);}
+
+  /* ── contact ─────────────────────────────────────────── */
+  .contact-layout{display:grid;grid-template-columns:1fr 1.05fr;gap:72px;align-items:start;}
+  .contact-left h2{font-size:clamp(1.8rem,3.2vw,2.5rem);margin-top:18px;margin-bottom:16px;}
+  .contact-left .lead{margin-bottom:40px;}
+  .cdetail{display:flex;gap:15px;align-items:flex-start;padding:18px 0;border-top:1px solid var(--line);}
+  .cdetail:first-of-type{border-top:none;}
+  .cico{width:42px;height:42px;border-radius:8px;background:var(--pink-soft);color:var(--pink);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .cico svg{width:20px;height:20px;}
+  .cinfo span{display:block;font-family:var(--mono);font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted-2);margin-bottom:3px;}
+  .cinfo a,.cinfo p{font-size:.95rem;color:var(--ink);font-weight:500;}
+  .cinfo a:hover{color:var(--pink);}
+  .form-box{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:40px;}
+  .form-box h3{font-family:var(--serif);font-weight:700;font-size:1.2rem;color:var(--ink);margin-bottom:28px;}
+  .fgroup{margin-bottom:18px;}
+  .fgroup label{display:block;font-family:var(--mono);font-size:.68rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+  .fgroup input,.fgroup textarea,.fgroup select{width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:4px;font-family:var(--sans);font-size:.92rem;color:var(--ink);background:var(--paper);transition:border-color .18s,box-shadow .18s;outline:none;}
+  .fgroup input:focus,.fgroup textarea:focus,.fgroup select:focus{border-color:var(--pink);box-shadow:0 0 0 3px rgba(232,23,90,.08);}
+  .fgroup textarea{min-height:112px;resize:vertical;}
+  .frow{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .fsubmit{width:100%;justify-content:center;margin-top:6px;}
+  .fnote{font-family:var(--mono);font-size:.7rem;color:var(--muted-2);text-align:center;margin-top:14px;}
+
+  /* ── footer ──────────────────────────────────────────── */
+  footer{background:var(--ink);color:#fff;padding:72px 0 0;border-top:3px solid var(--pink);}
+  .foot-grid{display:grid;grid-template-columns:2.2fr 1fr 1fr 1.2fr;gap:48px;padding-bottom:52px;}
+  .foot-brand img{height:44px;width:auto;margin-bottom:18px;}
+  .foot-brand p{font-size:.86rem;color:rgba(255,255,255,.5);line-height:1.7;max-width:280px;}
+  .foot-col h5{font-family:var(--mono);font-size:.68rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:18px;}
+  .foot-col ul{list-style:none;}
+  .foot-col li{margin-bottom:12px;}
+  .foot-col a{font-size:.86rem;color:rgba(255,255,255,.55);transition:color .18s;}
+  .foot-col a:hover{color:var(--pink);}
+  .foot-bottom{border-top:1px solid rgba(255,255,255,.08);padding:22px 0;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+  .foot-bottom p{font-family:var(--mono);font-size:.74rem;color:rgba(255,255,255,.32);}
+  .foot-soc{display:flex;gap:10px;}
+  .foot-soc a{width:36px;height:36px;border-radius:6px;border:1px solid rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.74rem;color:rgba(255,255,255,.5);transition:all .18s;}
+  .foot-soc a:hover{border-color:var(--pink);color:var(--pink);}
+
+  /* ── whatsapp float ──────────────────────────────────── */
+  .wpp{position:fixed;bottom:26px;right:26px;z-index:400;width:58px;height:58px;border-radius:50%;background:#25D366;color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 26px rgba(37,211,102,.4);transition:transform .22s;}
+  .wpp:hover{transform:scale(1.08);}
+  .wpp svg{width:30px;height:30px;}
+  .wpp::after{content:'';position:absolute;inset:-6px;border-radius:50%;border:2px solid #25D366;opacity:.35;animation:wpp 2s ease-out infinite;}
+  @keyframes wpp{0%{transform:scale(1);opacity:.4;}100%{transform:scale(1.4);opacity:0;}}
+
+  /* ── reveal animations ───────────────────────────────── */
+  .fu{transition:opacity .85s cubic-bezier(.16,1,.3,1),transform .85s cubic-bezier(.16,1,.3,1),filter .85s cubic-bezier(.16,1,.3,1);}
+  .js-animate .fu{opacity:0;transform:translateY(28px);filter:blur(9px);}
+  .js-animate .fu.in{opacity:1;transform:translateY(0);filter:blur(0);}
+  @media(prefers-reduced-motion:reduce){.js-animate .fu{opacity:1;transform:none;filter:none;transition:none;}}
+  .fu.d1{transition-delay:.08s}.fu.d2{transition-delay:.16s}.fu.d3{transition-delay:.24s}.fu.d4{transition-delay:.32s}
+  .hero-load{animation:rise .9s cubic-bezier(.16,1,.3,1) backwards;}
+  .hero-load.l2{animation-delay:.12s;}
+  @keyframes rise{from{opacity:0;transform:translateY(26px);}to{opacity:1;transform:translateY(0);}}
+
+  /* ── responsive ──────────────────────────────────────── */
+  @media(max-width:960px){
+    .method-cards{grid-template-columns:1fr 1fr;}
+    .diff-layout{grid-template-columns:1fr;gap:48px;}
+    .diffs-frame{position:static;}
+    .faq-layout{grid-template-columns:1fr;gap:36px;}
+    .faq-left{position:static;}
+    .contact-layout{grid-template-columns:1fr;gap:44px;}
+    .foot-grid{grid-template-columns:1fr 1fr;gap:36px;}
+  }
+  @media(max-width:680px){
+    .wrap{padding:0 20px;}
+    section{padding:72px 0;}
+    .hero{padding-top:84px;}
+    .hero-app-wrap{max-height:340px;padding:0 14px;}
+    .app-body{grid-template-columns:1fr;}
+    .app-side{display:none;}
+    .svc-row{grid-template-columns:64px 1fr;gap:16px 18px;padding:26px 0;}
+    .svc-row .svc-d{grid-column:1 / -1;}
+    .svc-arrow{display:none;}
+    .svc-row::before{left:-14px;right:-14px;}
+    .svc-n{font-size:2.2rem;}
+    .steps{grid-template-columns:1fr;gap:40px;}
+    .steps::before{display:none;}
+    .method-cards{grid-template-columns:1fr;}
+    .stat-bar{grid-template-columns:1fr;}
+    .stat{padding:24px 0;}
+    .mod-head{grid-template-columns:1fr auto;gap:12px;padding:18px;}
+    .mod-tags{grid-column:1 / -1;}
+    .mod-meta .mod-hours{display:none;}
+    .mod-inner{grid-template-columns:1fr;padding:18px;gap:22px;}
+    .frow{grid-template-columns:1fr;}
+    .form-box{padding:26px;}
+    .foot-grid{grid-template-columns:1fr;}
+    .train-cta{flex-direction:column;gap:18px;}
+    .hero-btns .btn{flex:1;justify-content:center;}
+    .hero-inner{padding:30px 24px 0;}
+    .diffs-frame{padding:26px;}
+    .block-title{font-size:1.3rem;}
+    .cinfo a,.foot-col a{word-break:break-word;}
+  }
+  @media(max-width:480px){
+    .wrap{padding:0 16px;}
+    .brand img{height:30px;}
+    .hero{padding-top:78px;}
+    .hero-inner{padding:24px 18px 0;}
+    .hero h1{font-size:1.95rem;}
+    .hero-sub{font-size:1rem;}
+    .hero-badge{font-size:.6rem;letter-spacing:.14em;padding:8px 14px;}
+    .hero-btns{flex-direction:column;}
+    .hero-btns .btn{width:100%;flex:none;font-size:15px;}
+    .hero-app-wrap{max-height:300px;padding:0 8px;}
+    .app-top{padding:10px 12px;font-size:.7rem;gap:8px;}
+    .app-main{padding:18px 15px;}
+    .app-row{padding:11px 12px;gap:10px;}
+    .app-row .tag{font-size:.6rem;padding:3px 8px;}
+    .form-box{padding:20px;}
+    .diffs-frame{padding:20px;}
+    .strip h3{font-size:1.4rem;}
+    .strip-row .cl{font-size:.68rem;padding:10px 13px;}
+    .sec-head h2,.method-head h2,.train-head h2,.acc-head h2,.faq-left h2,.contact-left h2,.cta-w h2{font-size:1.72rem;}
+    .cta-btns{flex-direction:column;}
+    .cta-btns .btn{width:100%;}
+    .pill{font-size:.68rem;}
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<header class="nav" id="nav">
+  <div class="nav-w">
+    <a href="#top" class="brand"><img src="img/logo_footer.png" alt="LMelo Tech"></a>
+    <nav class="nav-links" id="navLinks">
+      <a href="#servicos">Serviços</a>
+      <a href="#metodologia">Metodologia</a>
+      <a href="#treinamentos">Treinamentos</a>
+      <a href="#clientes">Clientes</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <div class="actions">
+      <a href="#contato" class="nav-cta">Fale conosco</a>
+      <button class="nav-burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="hero-stars" data-parallax="0.07"></div>
+  <div class="hero-inner">
+    <div class="hero-badge hero-load">Automatizar · Monitorar · Decidir</div>
+    <h1 class="hero-load">Auditoria contínua que trabalha com <em>dados</em>, não com amostragem</h1>
+    <p class="hero-sub hero-load">Testes e controles rodando sozinhos sobre 100% dos dados da operação. Sua equipe para de coletar planilha e volta ao que importa: investigar exceções e decidir.</p>
+    <div class="hero-btns hero-load">
+      <a href="#contato" class="btn btn-fill">Fale com um especialista
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <a href="#servicos" class="btn hero-ghost">Conheça os serviços</a>
+    </div>
+    <div class="hero-proof hero-load">
+      <div class="hero-proof-line">Quem opera com a gente: <b>FGV · ArcelorMittal · Cemig · CBA · Jamef · Ânima · Sada</b></div>
+      <div class="hero-feats">
+        <span class="hero-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg>100% dos dados, sem amostragem</span>
+        <span class="hero-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg>+15 anos de experiência em auditoria</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-app-wrap hero-load l2">
+    <div class="hero-app-glow"></div>
+    <div class="hero-app">
+      <div class="app-top">
+        <span class="bars"><i></i><i></i><i></i></span>
+        <span class="trial">Monitoramento contínuo ativo — <b>1.284 testes</b> rodando sobre 100% dos dados</span>
+        <span class="up">Ver exceções →</span>
+      </div>
+      <div class="app-body">
+        <aside class="app-side">
+          <div class="logo">◆</div>
+          <div class="app-new"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>Nova análise</div>
+          <nav class="app-nav">
+            <a class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 13h8V3H3zM13 21h8V8h-8zM3 21h8v-5H3z"/></svg>Painel</a>
+            <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Auditorias</a>
+            <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Controles</a>
+            <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M10.3 3.3a1 1 0 0 1 1.7 0l8.5 14.7a1 1 0 0 1-.9 1.5H2.4a1 1 0 0 1-.9-1.5z"/><path d="M12 9v4M12 17h.01"/></svg>Exceções</a>
+            <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>Relatórios</a>
+          </nav>
+        </aside>
+        <div class="app-main">
+          <h5>Exceções detectadas hoje</h5>
+          <div class="sub">12 itens · atualizado há 2 min · execução 09:42</div>
+          <div class="app-rows">
+            <div class="app-row"><span class="dot r"></span><div class="info"><b>Pagamento duplicado — Contas a pagar</b><span>NF 48.221 · R$ 84.300 · fornecedor recorrente</span></div><span class="tag exc">exceção</span></div>
+            <div class="app-row"><span class="dot r"></span><div class="info"><b>Conflito de alçada (SoD) — Acessos</b><span>usuário cadastra e aprova o mesmo pagamento</span></div><span class="tag exc">exceção</span></div>
+            <div class="app-row"><span class="dot a"></span><div class="info"><b>Saída sem baixa — Estoque</b><span>3 movimentações sem registro fiscal</span></div><span class="tag exc">revisar</span></div>
+            <div class="app-row"><span class="dot g"></span><div class="info"><b>Notas fiscais — Conferência</b><span>12.480 registros validados</span></div><span class="tag ok">ok</span></div>
+            <div class="app-row"><span class="dot g"></span><div class="info"><b>Folha de pagamento — Rubricas</b><span>100% das rubricas testadas</span></div><span class="tag ok">ok</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="services-sec" id="servicos">
+  <div class="wrap">
+    <div class="sec-head fu">
+      <div class="kicker">[ 01 ] Nossos serviços</div>
+      <h2 class="display">O que entregamos</h2>
+      <p class="lead">A gente desenha, automatiza e opera testes e controles ao lado da sua equipe de auditoria, compliance e controles internos. Profundidade técnica em ACL Analytics, ACLScript, Robotics e HighBond — sem perder a visão do processo de negócio.</p>
+    </div>
+
+    <div class="svc-list">
+      <a href="#contato" class="svc-row fu">
+        <span class="svc-n">01</span>
+        <span class="svc-t">Automação de testes para Auditoria Contínua</span>
+        <span class="svc-d">Você deixa de testar 50 transações por trimestre e passa a testar todas, de forma recorrente. Rotinas rodam sobre os dados da operação e entregam as exceções já filtradas, prontas para sua equipe agir.</span>
+        <span class="svc-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+      </a>
+      <a href="#contato" class="svc-row fu d1">
+        <span class="svc-n">02</span>
+        <span class="svc-t">Automação de controles para Monitoramento Contínuo</span>
+        <span class="svc-d">Controles automatizados que rodam sobre os processos críticos quase em tempo real. O desvio é capturado quando acontece — não três meses depois na próxima auditoria.</span>
+        <span class="svc-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+      </a>
+      <a href="#treinamentos" class="svc-row fu d2">
+        <span class="svc-n">03</span>
+        <span class="svc-t">Treinamentos em ACL Analytics</span>
+        <span class="svc-d">Sua equipe aprende fazendo. Cada turma resolve um caso real do começo ao fim, com os dados e o contexto da sua empresa — não com exemplos genéricos de tutorial.</span>
+        <span class="svc-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- METHODOLOGY -->
+<section class="method-sec" id="metodologia">
+  <div class="wrap">
+    <div class="method-head fu">
+      <div class="kicker">[ 02 ] Metodologia de trabalho</div>
+      <h2 class="display">Como rodamos o projeto</h2>
+      <p class="lead">Três fases, sem mistério. Em cada uma, você fica no controle e sua equipe vai assumindo a operação.</p>
+    </div>
+    <div class="steps">
+      <div class="step hi fu d1">
+        <div class="step-n">1</div>
+        <h4>Diagnóstico &amp; Especificação</h4>
+        <p>A gente senta com o dono do processo, mapeia riscos, controles e regras de negócio. Documentamos uma especificação clara antes de codar qualquer coisa.</p>
+        <div class="step-items"><span>Diagnóstico do ambiente</span><span>Mapeamento de fontes</span><span>Regras de negócio</span></div>
+      </div>
+      <div class="step fu d2">
+        <div class="step-n">2</div>
+        <h4>Desenvolvimento &amp; Validação</h4>
+        <p>Construímos as automações em ACL Analytics, ACLScript e Robotics. Validamos os resultados com você e colocamos em produção com documentação completa.</p>
+        <div class="step-items"><span>Scripts e automações</span><span>Testes com equipe interna</span><span>Implantação segura</span></div>
+      </div>
+      <div class="step fu d3">
+        <div class="step-n">3</div>
+        <h4>Autonomia &amp; Monitoramento</h4>
+        <p>Capacitamos a equipe para operar, manter e evoluir. As exceções começam a chegar prontas para tratamento na frequência que a operação precisa.</p>
+        <div class="step-items"><span>Transferência de conhecimento</span><span>Monitoramento contínuo</span><span>Suporte pós-entrega</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TECH STRIP -->
+<div class="strip">
+  <div class="wrap">
+    <h3 class="fu">Tecnologias e plataformas que dominamos</h3>
+    <div class="strip-row fu d1">
+      <span class="cl active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M6 21V11"/><path d="M11 21V5"/><path d="M16 21v-8"/></svg>ACL Analytics</span>
+      <span class="cl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>Highbond</span>
+      <span class="cl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="6" width="14" height="13" rx="2"/><path d="M9 11h6v4H9z"/><path d="M9 2v4M15 2v4M2 11h3M2 15h3M19 11h3M19 15h3"/></svg>ACL Robotics</span>
+      <span class="cl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5.5" rx="8" ry="3"/><path d="M4 5.5v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/><path d="M4 11.5v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></svg>SAP</span>
+      <span class="cl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="12" height="16" rx="2"/><path d="M9 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/><path d="M9 13l2 2 4-4"/></svg>Diligent</span>
+      <span class="cl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="12" rx="9" ry="5.5"/><ellipse cx="12" cy="12" rx="3.5" ry="3.5"/></svg>Oracle</span>
+      <span class="cl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><rect x="5" y="9" width="3" height="12" rx="1"/><rect x="10.5" y="4" width="3" height="17" rx="1"/><rect x="16" y="13" width="3" height="8" rx="1"/></svg>Power BI</span>
+      <span class="cl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 18l6-6-6-6"/><path d="M8 6l-6 6 6 6"/></svg>Python</span>
+    </div>
+  </div>
+</div>
+
+<!-- TRAININGS -->
+<section class="train-sec" id="treinamentos">
+  <div class="train-grid" data-parallax="0.05"></div>
+  <div class="wrap">
+    <div class="train-head fu">
+      <div class="kicker on-dark">[ 03 ] Programa de capacitação</div>
+      <h2 class="display">Sua equipe fazendo<br>auditoria orientada a dados</h2>
+      <p class="lead">Cada turma resolve um caso real, do entendimento do processo à entrega do resultado. O foco é o planejamento lógico — entender o porquê de cada análise, não só o como da ferramenta.</p>
+      <div class="pill-row">
+        <span class="pill">Conteúdo adaptado aos seus dados</span>
+        <span class="pill">Caso prático completo</span>
+        <span class="pill">Exercício pós-turma</span>
+        <span class="pill">Feedback contínuo</span>
+      </div>
+    </div>
+
+    <div class="fu">
+      <h3 class="block-title"><span class="idx">A.</span>Como nossos treinamentos funcionam</h3>
+      <div class="method-cards">
+        <div class="mcard">
+          <div class="mcard-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg></div>
+          <h4>Aprender resolvendo</h4>
+          <p>Teoria sempre vem acompanhada de prática com os dados reais da sua operação. O aluno termina o curso com um caso completo na bagagem.</p>
+        </div>
+        <div class="mcard">
+          <div class="mcard-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/></svg></div>
+          <h4>Caso real do início ao fim</h4>
+          <p>Cada turma cobre o ciclo completo: do entendimento do processo à entrega do relatório de exceções para o time de negócio.</p>
+        </div>
+        <div class="mcard">
+          <div class="mcard-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5a3 3 0 0 0-3 3 3 3 0 0 0-3 3 3 3 0 0 0 1.5 2.6A3 3 0 0 0 9 19h6a3 3 0 0 0 1.5-5.4A3 3 0 0 0 18 11a3 3 0 0 0-3-3 3 3 0 0 0-3-3z"/><path d="M12 5v14"/></svg></div>
+          <h4>Pensar antes de codar</h4>
+          <p>O foco está no planejamento lógico. A ferramenta vem depois — primeiro a gente entende o que precisa ser analisado e por quê.</p>
+        </div>
+        <div class="mcard">
+          <div class="mcard-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h2l1 1h13"/><path d="M4 12h2l1 1h13"/><path d="M4 18h2l1 1h13"/></svg></div>
+          <h4>Planejamento das análises</h4>
+          <p>Definição de objetivos, layout de saída, mapeamento de tabelas, regras de negócio, filtros e periodicidade. Tudo antes de abrir o software.</p>
+        </div>
+        <div class="mcard">
+          <div class="mcard-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-8 8H5l3-3a8 8 0 0 1 13-5z"/></svg></div>
+          <h4>Suporte depois da turma</h4>
+          <p>O aprendizado não para no último dia. Sessões de feedback continuam disponíveis para tirar dúvidas conforme sua equipe aplica o que aprendeu.</p>
+        </div>
+        <div class="mcard">
+          <div class="mcard-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+          <h4>Resultado mensurável</h4>
+          <p>No fim, sua equipe entrega um relatório de exceções de verdade — pronto para ser levado ao time de negócio e à liderança.</p>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="block-title fu"><span class="idx">B.</span>Módulos disponíveis</h3>
+    <div class="modules">
+
+      <div class="mod fu" id="tr001">
+        <div class="mod-head" onclick="toggleMod(event)">
+          <div class="mod-tags"><span class="mod-code">TR-001</span><span class="badge basic">Básico</span></div>
+          <div class="mod-title">
+            <h4>Fundamentos de ACL Analytics</h4>
+            <p>Para quem está começando e precisa dominar o ciclo de análise na ferramenta.</p>
+          </div>
+          <div class="mod-meta"><span class="mod-hours">Customizado</span><div class="mod-tog">+</div></div>
+        </div>
+        <div class="mod-body">
+          <div class="mod-inner">
+            <div>
+              <div class="mod-sub">Conteúdo</div>
+              <ul class="mod-topics">
+                <li>Conceitos de dados e o ciclo de análise</li>
+                <li>Acesso e importação de dados de ERPs</li>
+                <li>Visualização, ordenação e filtragem</li>
+                <li>Verificação de integridade dos dados</li>
+                <li>Agrupamento e sumarização</li>
+                <li>Identificação de duplicidades e gaps</li>
+                <li>Combinação de tabelas</li>
+                <li>Geração de relatórios</li>
+                <li>Planejamento lógico das análises</li>
+              </ul>
+            </div>
+            <div>
+              <div class="mod-sub">O aluno sai sabendo</div>
+              <div class="mod-out">
+                <div><span>✓</span>Importar e validar bases de qualquer ERP</div>
+                <div><span>✓</span>Executar testes básicos de duplicidade e gaps</div>
+                <div><span>✓</span>Planejar uma análise do início ao fim</div>
+                <div><span>✓</span>Documentar e apresentar achados</div>
+              </div>
+              <div class="mod-pre"><strong>Pré-requisito:</strong> Nenhum.</div>
+              <a href="https://wa.me/5521965051150?text=Ol%C3%A1!%20Tenho%20interesse%20no%20treinamento%20Fundamentos%20de%20ACL%20Analytics%20(TR-001)." target="_blank" class="btn btn-fill" style="margin-top:18px;">Falar pelo WhatsApp →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mod fu" id="tr002">
+        <div class="mod-head" onclick="toggleMod(event)">
+          <div class="mod-tags"><span class="mod-code">TR-002</span><span class="badge mid">Intermediário</span></div>
+          <div class="mod-title">
+            <h4>Intermediário de ACL Analytics</h4>
+            <p>Para quem já passou pelo básico e quer profundidade em expressões e funções.</p>
+          </div>
+          <div class="mod-meta"><span class="mod-hours">Customizado</span><div class="mod-tog">+</div></div>
+        </div>
+        <div class="mod-body">
+          <div class="mod-inner">
+            <div>
+              <div class="mod-sub">Conteúdo</div>
+              <ul class="mod-topics">
+                <li>Expressões e filtros avançados</li>
+                <li>Campos computados</li>
+                <li>Biblioteca de funções (texto, data, numéricas, condicionais)</li>
+                <li>Padronização de dados inconsistentes</li>
+                <li>Comparação entre bases de sistemas diferentes</li>
+                <li>Boas práticas de organização do projeto ACL</li>
+              </ul>
+            </div>
+            <div>
+              <div class="mod-sub">O aluno sai sabendo</div>
+              <div class="mod-out">
+                <div><span>✓</span>Construir expressões e filtros complexos</div>
+                <div><span>✓</span>Padronizar dados sujos de origem</div>
+                <div><span>✓</span>Cruzar bases de sistemas diferentes</div>
+                <div><span>✓</span>Organizar projetos ACL para crescer</div>
+              </div>
+              <div class="mod-pre"><strong>Pré-requisito:</strong> TR-001 ou experiência equivalente.</div>
+              <a href="https://wa.me/5521965051150?text=Ol%C3%A1!%20Tenho%20interesse%20no%20treinamento%20Intermedi%C3%A1rio%20de%20ACL%20Analytics%20(TR-002)." target="_blank" class="btn btn-fill" style="margin-top:18px;">Falar pelo WhatsApp →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mod fu" id="tr003">
+        <div class="mod-head" onclick="toggleMod(event)">
+          <div class="mod-tags"><span class="mod-code">TR-003</span><span class="badge adv">Avançado</span></div>
+          <div class="mod-title">
+            <h4>ACLScript — Automação de Análises</h4>
+            <p>Para quem quer parar de rodar análise manual e passar a automatizar com scripts.</p>
+          </div>
+          <div class="mod-meta"><span class="mod-hours">Customizado</span><div class="mod-tog">+</div></div>
+        </div>
+        <div class="mod-body">
+          <div class="mod-inner">
+            <div>
+              <div class="mod-sub">Conteúdo</div>
+              <ul class="mod-topics">
+                <li>Fundamentos de ACLScript: estrutura, sintaxe, variáveis</li>
+                <li>Conversão de análises ad hoc em scripts</li>
+                <li>Controle de fluxo, condicionais e loops</li>
+                <li>Scripts interativos e parametrizados</li>
+                <li>Modularização e documentação</li>
+                <li>Debugging e troubleshooting</li>
+                <li>Planejamento da automação antes de codificar</li>
+              </ul>
+            </div>
+            <div>
+              <div class="mod-sub">O aluno sai sabendo</div>
+              <div class="mod-out">
+                <div><span>✓</span>Escrever scripts robustos e reutilizáveis</div>
+                <div><span>✓</span>Parametrizar análises para diferentes cenários</div>
+                <div><span>✓</span>Diagnosticar e corrigir erros em código</div>
+                <div><span>✓</span>Estruturar projetos analíticos reutilizáveis</div>
+              </div>
+              <div class="mod-pre"><strong>Pré-requisito:</strong> TR-002 ou domínio das funções intermediárias.</div>
+              <a href="https://wa.me/5521965051150?text=Ol%C3%A1!%20Tenho%20interesse%20no%20treinamento%20ACLScript%20(TR-003)." target="_blank" class="btn btn-fill" style="margin-top:18px;">Falar pelo WhatsApp →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mod fu" id="tr004">
+        <div class="mod-head" onclick="toggleMod(event)">
+          <div class="mod-tags"><span class="mod-code">TR-004</span><span class="badge adv">Avançado</span></div>
+          <div class="mod-title">
+            <h4>Monitoramento Contínuo com ACL Robotics</h4>
+            <p>Para quem vai levar a automação para a nuvem, com execução programada e integração ao HighBond.</p>
+          </div>
+          <div class="mod-meta"><span class="mod-hours">Customizado</span><div class="mod-tog">+</div></div>
+        </div>
+        <div class="mod-body">
+          <div class="mod-inner">
+            <div>
+              <div class="mod-sub">Conteúdo</div>
+              <ul class="mod-topics">
+                <li>Arquitetura do ACL Robotics</li>
+                <li>Migração de scripts do ACL Analytics para o Robotics</li>
+                <li>Agendamento e execução automática</li>
+                <li>Gestão de inputs, outputs e tabelas de resultados</li>
+                <li>Integração com HighBond para tratamento de exceções</li>
+                <li>Monitoramento de execuções e tratamento de falhas</li>
+                <li>Desenho de programas de auditoria e monitoramento contínuos</li>
+                <li>Governança das automações em produção</li>
+              </ul>
+            </div>
+            <div>
+              <div class="mod-sub">O aluno sai sabendo</div>
+              <div class="mod-out">
+                <div><span>✓</span>Programar execuções recorrentes na nuvem</div>
+                <div><span>✓</span>Integrar resultados ao HighBond</div>
+                <div><span>✓</span>Desenhar um programa de monitoramento contínuo</div>
+                <div><span>✓</span>Garantir governança das automações em produção</div>
+              </div>
+              <div class="mod-pre"><strong>Pré-requisito:</strong> TR-003 ou domínio de ACLScript.</div>
+              <a href="https://wa.me/5521965051150?text=Ol%C3%A1!%20Tenho%20interesse%20no%20treinamento%20ACL%20Robotics%20(TR-004)." target="_blank" class="btn btn-fill" style="margin-top:18px;">Falar pelo WhatsApp →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="train-cta fu">
+      <p>Quer um programa desenhado para o contexto da sua equipe?</p>
+      <a href="https://wa.me/5521965051150?text=Ol%C3%A1!%20Gostaria%20de%20conversar%20sobre%20um%20treinamento%20customizado." target="_blank" class="btn btn-fill">Conversar pelo WhatsApp →</a>
+    </div>
+  </div>
+</section>
+
+<!-- DIFFERENTIALS -->
+<section class="diff-sec" id="diferenciais">
+  <div class="wrap">
+    <div class="diff-layout">
+      <div class="acc-left">
+        <div class="acc-head fu">
+          <div class="kicker">[ 04 ] Diferenciais competitivos</div>
+          <h2 class="display">Por que escolher<br>a LMelo Tech?</h2>
+        </div>
+        <div class="acc-item fu">
+          <button class="acc-btn open" onclick="toggleAcc(this)">Trajetória sólida em ACL Analytics<div class="acc-chev">▾</div></button>
+          <div class="acc-body open"><div class="acc-inner"><p>Anos rodando projetos de auditoria orientada a dados em empresas de setores variados — do financeiro à siderurgia. Sabemos onde estão os atalhos e onde estão as armadilhas.</p></div></div>
+        </div>
+        <div class="acc-item fu">
+          <button class="acc-btn" onclick="toggleAcc(this)">Foco em auditoria e monitoramento contínuos<div class="acc-chev">▾</div></button>
+          <div class="acc-body"><div class="acc-inner"><ul><li>Testes recorrentes sobre 100% das transações</li><li>Exceções entregues prontas para tratamento</li><li>Controles que disparam alerta no momento do desvio</li><li>Trilha de evidências consistente para o programa</li></ul></div></div>
+        </div>
+        <div class="acc-item fu">
+          <button class="acc-btn" onclick="toggleAcc(this)">A solução nasce do seu processo<div class="acc-chev">▾</div></button>
+          <div class="acc-body"><div class="acc-inner"><p>Cada cliente tem fluxos, sistemas e regras próprias. A gente entende o seu antes de propor qualquer coisa — e o que entregamos cresce junto com a operação.</p></div></div>
+        </div>
+        <div class="acc-item fu">
+          <button class="acc-btn" onclick="toggleAcc(this)">Sua equipe sai operando<div class="acc-chev">▾</div></button>
+          <div class="acc-body"><div class="acc-inner"><p>O projeto não termina com a entrega. Sua equipe é capacitada para operar, manter e evoluir as automações. Sem amarra técnica, sem refém de fornecedor.</p></div></div>
+        </div>
+        <div class="acc-item fu">
+          <button class="acc-btn" onclick="toggleAcc(this)">Trabalho transparente, sem caixa-preta<div class="acc-chev">▾</div></button>
+          <div class="acc-body"><div class="acc-inner"><p>Documentação clara, código auditável, decisões compartilhadas. Você sabe exatamente o que está sendo feito e por quê — em todo momento do projeto.</p></div></div>
+        </div>
+      </div>
+      <div class="acc-right fu d1">
+        <div class="diffs-frame">
+          <h4>Como trabalhamos</h4>
+          <div class="drow"><div class="ddot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/><path d="M3 18l9 5 9-5"/></svg></div><div><strong>Excelência técnica</strong><span>Rigor metodológico e precisão em cada entrega</span></div></div>
+          <div class="drow"><div class="ddot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 12l3 3 5-5"/><circle cx="12" cy="12" r="9"/></svg></div><div><strong>Ética e transparência</strong><span>Relações baseadas em confiança e honestidade</span></div></div>
+          <div class="drow"><div class="ddot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.5.5 1 1.2 1 2V16h6v-.5c0-.8.5-1.5 1-2A6 6 0 0 0 12 3z"/></svg></div><div><strong>Inovação e tecnologia</strong><span>Soluções de ponta alinhadas ao futuro da auditoria</span></div></div>
+          <div class="drow"><div class="ddot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></div><div><strong>Compromisso com resultados</strong><span>Entregas mensuráveis e impacto real no negócio</span></div></div>
+          <div class="drow"><div class="ddot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M21 21v-2a4 4 0 0 0-3-3.9"/><path d="M17 3.1a4 4 0 0 1 0 7.8"/></svg></div><div><strong>Foco no cliente</strong><span>Soluções adaptadas à realidade de cada organização</span></div></div>
+          <div class="drow"><div class="ddot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div><div><strong>Aprendizado contínuo</strong><span>Evolução constante com as melhores práticas do setor</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CLIENTS -->
+<section class="clients-sec" id="clientes">
+  <div class="wrap">
+    <div class="sec-head fu">
+      <div class="kicker">[ 05 ] Quem confia no nosso trabalho</div>
+      <h2 class="display">Clientes que escolheram<br>auditoria orientada a dados</h2>
+      <p class="lead">Empresas de diferentes setores que já operam testes e controles de forma contínua com a LMelo Tech.</p>
+    </div>
+    <div class="clients-grid fu d1">
+      <div class="client"><div class="client-logo"><img src="img/fgv.png" alt="Fundação Getulio Vargas"></div><div class="client-name">Fundação Getulio Vargas</div></div>
+      <div class="client"><div class="client-logo"><img src="img/arcelor.png" alt="ArcelorMittal"></div><div class="client-name">ArcelorMittal</div></div>
+      <div class="client"><div class="client-logo"><img src="img/cemig.png" alt="Cemig"></div><div class="client-name">Cemig</div></div>
+      <div class="client"><div class="client-logo"><img src="img/cba.png" alt="CBA"></div><div class="client-name">Cia. Brasileira de Alumínio</div></div>
+      <div class="client"><div class="client-logo"><img src="img/jamef.png" alt="Jamef"></div><div class="client-name">Jamef</div></div>
+      <div class="client"><div class="client-logo"><img src="img/anima.png" alt="Ânima Educação"></div><div class="client-name">Ânima Educação</div></div>
+      <div class="client"><div class="client-logo"><img src="img/sada.png" alt="Sada"></div><div class="client-name">Sada</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-sec">
+  <div class="wrap">
+    <div class="cta-w fu">
+      <div class="kicker on-dark">Pronto para começar?</div>
+      <h2 class="display">Conte o desafio da sua área</h2>
+      <p>Em uma conversa, mapeamos juntos onde a automação e o monitoramento contínuo podem gerar mais valor para o seu programa de auditoria e controles.</p>
+      <div class="cta-btns">
+        <a href="#contato" class="btn btn-fill">Agendar uma conversa</a>
+        <a href="#servicos" class="btn btn-line on-dark">Ver casos de uso</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-sec" id="faq">
+  <div class="wrap">
+    <div class="faq-layout">
+      <div class="faq-left fu">
+        <div class="kicker">[ 06 ] FAQ</div>
+        <h2 class="display">Perguntas frequentes</h2>
+        <p>Não encontrou sua resposta aqui?</p>
+        <a href="#contato" class="link">Entre em contato →</a>
+      </div>
+      <div class="faq-right">
+        <div class="faq-item fu"><button class="faq-btn open" onclick="toggleFaq(this)">Minha equipe não tem experiência técnica. Isso é um problema?<div class="faq-ic">+</div></button><div class="faq-body open"><p>Não. Nossa metodologia foi desenvolvida para equipes de auditoria sem perfil de TI. O ACL Analytics não exige programação avançada, e nosso processo inclui transferência completa de conhecimento — sua equipe termina o projeto operando com autonomia.</p></div></div>
+        <div class="faq-item fu"><button class="faq-btn" onclick="toggleFaq(this)">Quanto tempo leva para ver os primeiros resultados?<div class="faq-ic">+</div></button><div class="faq-body"><p>Nos projetos de automação, os primeiros scripts costumam aparecer nas primeiras 2 a 4 semanas. Para monitoramento contínuo, a implantação completa varia de 6 a 12 semanas. Trabalhamos com entregas incrementais — você vê progresso desde o início.</p></div></div>
+        <div class="faq-item fu"><button class="faq-btn" onclick="toggleFaq(this)">Posso contratar só o treinamento?<div class="faq-ic">+</div></button><div class="faq-body"><p>Sim. Os treinamentos são módulos independentes. Muitos clientes começam pelo treinamento para capacitar a equipe interna e depois contratam o suporte de automação conforme a demanda cresce.</p></div></div>
+        <div class="faq-item fu"><button class="faq-btn" onclick="toggleFaq(this)">Vou ficar dependente da consultoria?<div class="faq-ic">+</div></button><div class="faq-body"><p>Não. Nosso modelo é baseado em transferência de conhecimento. Ao final de cada projeto, sua equipe sabe operar, manter e evoluir as soluções de forma independente. Parceria de longo prazo só acontece se você quiser crescer além.</p></div></div>
+        <div class="faq-item fu"><button class="faq-btn" onclick="toggleFaq(this)">A gente já usa SAP. Vocês integram bem?<div class="faq-ic">+</div></button><div class="faq-body"><p>O ACL Analytics tem integração nativa com SAP e os principais ERPs do mercado. Extraímos os dados diretamente das tabelas transacionais, sem middleware ou desenvolvimento adicional na sua infraestrutura.</p></div></div>
+        <div class="faq-item fu"><button class="faq-btn" onclick="toggleFaq(this)">Como começa o projeto?<div class="faq-ic">+</div></button><div class="faq-body"><p>O primeiro passo é uma conversa de 30 minutos para entender seu ambiente atual e o que você quer automatizar. A partir daí desenhamos uma proposta específica para o seu caso — sem compromisso.</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact-sec" id="contato">
+  <div class="wrap">
+    <div class="contact-layout">
+      <div class="contact-left fu">
+        <div class="kicker">[ 07 ] Contato</div>
+        <h2 class="display">Agende uma conversa com um especialista</h2>
+        <p class="lead">Manda o que você precisa resolver. A gente responde rápido, sem script pronto.</p>
+        <div class="cdetail"><div class="cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-1.3 4.5L21 21l-5-1.3a8.4 8.4 0 1 1 5-8.2z"/></svg></div><div class="cinfo"><span>WhatsApp</span><a href="https://wa.me/5521965051150?text=Ol%C3%A1!%20Gostaria%20de%20saber%20mais%20sobre%20as%20solu%C3%A7%C3%B5es%20da%20LMelo%20Tech." target="_blank">(21) 96505-1150</a></div></div>
+        <div class="cdetail"><div class="cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></div><div class="cinfo"><span>E-mail</span><a href="mailto:lucianaom@lmelotech.com.br">lucianaom@lmelotech.com.br</a></div></div>
+        <div class="cdetail"><div class="cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a13 13 0 0 1 0 18 13 13 0 0 1 0-18z"/></svg></div><div class="cinfo"><span>Website</span><a href="http://www.lmelotech.com.br" target="_blank">www.lmelotech.com.br</a></div></div>
+        <div class="cdetail"><div class="cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-7.5-7-12a7 7 0 1 1 14 0c0 4.5-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/></svg></div><div class="cinfo"><span>Localização</span><p>Rio de Janeiro, Brasil</p></div></div>
+      </div>
+      <div class="contact-right fu d1">
+        <div class="form-box">
+          <h3>Fale com um especialista — é gratuito</h3>
+          <form action="https://formspree.io/f/YOUR_FORM_ID" method="POST" onsubmit="handleSubmit(event)">
+            <div class="frow">
+              <div class="fgroup"><label>Nome *</label><input type="text" name="nome" placeholder="Seu nome completo" required></div>
+              <div class="fgroup"><label>Empresa *</label><input type="text" name="empresa" placeholder="Nome da empresa" required></div>
+            </div>
+            <div class="fgroup"><label>E-mail corporativo *</label><input type="email" name="email" placeholder="seu@empresa.com.br" required></div>
+            <div class="fgroup">
+              <label>Serviço de interesse</label>
+              <select name="servico">
+                <option value="">Selecione uma opção...</option>
+                <option>Automação de Testes de Auditoria</option>
+                <option>Auditoria / Monitoramento Contínuo</option>
+                <option>Fábrica de Software para Auditoria</option>
+                <option>Treinamentos ACL Analytics</option>
+                <option>Alocação de Auditor Especialista</option>
+                <option>Integração SAP / ERP</option>
+                <option>Outro / Não sei ainda</option>
+              </select>
+            </div>
+            <div class="fgroup"><label>Mensagem</label><textarea name="mensagem" placeholder="Conte um pouco sobre seus desafios atuais de auditoria e compliance..."></textarea></div>
+            <button type="submit" class="btn btn-fill fsubmit">Enviar mensagem →</button>
+            <p class="fnote">Retornamos em até 1 dia útil. Seus dados estão protegidos.</p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a href="#top"><img src="img/logo_footer.png" alt="LMelo Tech"></a>
+        <p>Consultoria técnica especializada em Data Analytics, automação de testes de auditoria e monitoramento contínuo. Mais de 15 anos transformando dados em governança.</p>
+      </div>
+      <div class="foot-col">
+        <h5>Serviços</h5>
+        <ul>
+          <li><a href="#servicos">Automação de Auditoria</a></li>
+          <li><a href="#servicos">Monitoramento Contínuo</a></li>
+          <li><a href="#servicos">Fábrica de Software</a></li>
+          <li><a href="#servicos">Integração SAP</a></li>
+          <li><a href="#servicos">Alocação de Especialista</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h5>Treinamentos</h5>
+        <ul>
+          <li><a href="#tr001">Fundamentos ACL Analytics</a></li>
+          <li><a href="#tr002">Intermediário ACL Analytics</a></li>
+          <li><a href="#tr003">ACLScript</a></li>
+          <li><a href="#tr004">ACL Robotics</a></li>
+          <li><a href="https://wa.me/5521965051150" target="_blank">Customizados</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h5>Contato</h5>
+        <ul>
+          <li><a href="mailto:lucianaom@lmelotech.com.br">lucianaom@lmelotech.com.br</a></li>
+          <li><a href="https://wa.me/5521965051150" target="_blank">(21) 96505-1150</a></li>
+          <li><a href="http://www.lmelotech.com.br" target="_blank">www.lmelotech.com.br</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <p>© 2025 LMelo Tech. Todos os direitos reservados.</p>
+      <div class="foot-soc">
+        <a href="https://wa.me/5521965051150" target="_blank">WA</a>
+        <a href="mailto:lucianaom@lmelotech.com.br">@</a>
+        <a href="https://linkedin.com" target="_blank">in</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- GRAIN OVERLAY -->
+<div class="grain" aria-hidden="true"></div>
+
+<!-- WHATSAPP FLOAT -->
+<a href="https://wa.me/5521965051150?text=Ol%C3%A1!%20Gostaria%20de%20conversar%20sobre%20auditoria%20com%20a%20LMelo%20Tech." target="_blank" rel="noopener" class="wpp" aria-label="Falar pelo WhatsApp">
+  <svg viewBox="0 0 32 32" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M16.003 0C7.166 0 .005 7.16.005 15.998c0 2.82.74 5.575 2.146 7.998L0 32l8.196-2.146a15.92 15.92 0 0 0 7.807 2.005h.005C24.84 31.86 32 24.7 32 15.86 32 11.585 30.33 7.567 27.31 4.545A15.94 15.94 0 0 0 16.003 0zm0 29.197h-.005a13.27 13.27 0 0 1-6.764-1.85l-.485-.287-5.024 1.318 1.34-4.9-.316-.503a13.243 13.243 0 0 1-2.029-7.072c.002-7.32 5.96-13.276 13.288-13.276 3.547 0 6.88 1.383 9.388 3.893a13.18 13.18 0 0 1 3.886 9.387c-.003 7.32-5.96 13.29-13.28 13.29zm7.29-9.94c-.4-.2-2.365-1.167-2.732-1.3-.367-.133-.633-.2-.9.2-.267.4-1.033 1.3-1.267 1.567-.233.267-.467.3-.867.1-.4-.2-1.687-.622-3.213-1.984-1.188-1.06-1.99-2.367-2.224-2.767-.233-.4-.025-.616.175-.815.18-.18.4-.467.6-.7.2-.234.267-.4.4-.667.133-.267.067-.5-.033-.7-.1-.2-.9-2.167-1.232-2.967-.324-.78-.654-.673-.9-.685-.233-.012-.5-.014-.766-.014-.267 0-.7.1-1.067.5-.367.4-1.4 1.367-1.4 3.333 0 1.967 1.433 3.867 1.633 4.133.2.267 2.82 4.307 6.83 6.04 2.31 1 4.07 1.6 5.46 2.05 1.395.45 2.665.39 3.67.24 1.12-.17 3.453-1.41 3.94-2.78.487-1.37.487-2.543.34-2.787-.146-.247-.466-.385-.866-.585z"/></svg>
+</a>
+
+<script>
+  // Fixed nav: subtle state on scroll + mobile menu
+  const nav = document.getElementById('nav');
+  const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 8);
+  onScroll(); window.addEventListener('scroll', onScroll, {passive:true});
+  const burger = document.getElementById('burger');
+  const navLinks = document.getElementById('navLinks');
+  burger.addEventListener('click', () => { burger.classList.toggle('open'); navLinks.classList.toggle('open'); });
+  navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { burger.classList.remove('open'); navLinks.classList.remove('open'); }));
+
+  // Subtle parallax on hero + training textures
+  (function(){
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const layers = Array.from(document.querySelectorAll('[data-parallax]'));
+    if (!layers.length) return;
+    let ticking = false;
+    function apply(){
+      const vh = window.innerHeight;
+      layers.forEach(l => {
+        const sec = l.parentElement;
+        const r = sec.getBoundingClientRect();
+        if (r.bottom < -300 || r.top > vh + 300) return;
+        const speed = parseFloat(l.dataset.parallax) || 0;
+        const delta = (r.top + r.height / 2) - vh / 2;
+        // negative sign => grid lags behind, moving slightly slower than the scroll
+        l.style.transform = 'translate3d(0,' + (-delta * speed).toFixed(1) + 'px,0)';
+      });
+      ticking = false;
+    }
+    function onScrollP(){ if (!ticking){ requestAnimationFrame(apply); ticking = true; } }
+    window.addEventListener('scroll', onScrollP, {passive:true});
+    window.addEventListener('resize', onScrollP);
+    apply();
+  })();
+
+  // Accordion: Diferenciais
+  function toggleAcc(btn){
+    const body = btn.nextElementSibling;
+    const isOpen = btn.classList.contains('open');
+    document.querySelectorAll('.acc-btn.open').forEach(b => { b.classList.remove('open'); b.nextElementSibling.classList.remove('open'); });
+    if(!isOpen){ btn.classList.add('open'); body.classList.add('open'); }
+  }
+  // Accordion: FAQ
+  function toggleFaq(btn){
+    const body = btn.nextElementSibling;
+    const isOpen = btn.classList.contains('open');
+    document.querySelectorAll('.faq-btn.open').forEach(b => { b.classList.remove('open'); b.nextElementSibling.classList.remove('open'); });
+    if(!isOpen){ btn.classList.add('open'); body.classList.add('open'); }
+  }
+  // Accordion: Training modules
+  function toggleMod(event){
+    if(event.target.closest('a')) return;
+    const head = event.currentTarget;
+    const card = head.parentElement;
+    const body = card.querySelector('.mod-body');
+    const isOpen = card.classList.contains('open');
+    document.querySelectorAll('.mod.open').forEach(c => { c.classList.remove('open'); c.querySelector('.mod-body').classList.remove('open'); });
+    if(!isOpen){ card.classList.add('open'); body.classList.add('open'); }
+  }
+
+  // Reveal on scroll
+  if('IntersectionObserver' in window){
+    document.body.classList.add('js-animate');
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold:0.1, rootMargin:'0px 0px -40px 0px' });
+    document.querySelectorAll('.fu').forEach(el => io.observe(el));
+  }
+
+  // Form feedback
+  function handleSubmit(e){
+    e.preventDefault();
+    const btn = e.target.querySelector('.fsubmit');
+    btn.textContent = 'Enviando...'; btn.disabled = true;
+    setTimeout(() => { btn.textContent = '✓ Mensagem enviada!'; btn.style.background = '#16a34a'; }, 1400);
+  }
+
+  // Smooth scroll
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const href = a.getAttribute('href');
+      if(href === '#' || href === '#top'){ if(href==='#top'){ e.preventDefault(); window.scrollTo({top:0,behavior:'smooth'}); } return; }
+      const t = document.querySelector(href);
+      if(t){ e.preventDefault(); t.scrollIntoView({behavior:'smooth'}); }
+    });
+  });
+</script>
+</body>
+</html>
