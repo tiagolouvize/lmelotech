@@ -483,6 +483,8 @@
   .client.is-active{transform:translateY(-4px);}
   .client.is-active .client-logo img{opacity:1;}
   .mod.is-active{background:rgba(255,255,255,.06);border-color:rgba(232,23,90,.28);}
+  .step.is-active .step-n{background:var(--ink);border-color:var(--ink);color:#fff;}
+  .step.hi.is-active .step-n{background:var(--pink);border-color:var(--pink);}
   .strip-row .cl.is-active{background:var(--pink-soft);color:var(--pink);}
   .strip-row .cl.is-active svg{opacity:1;}
   .strip-row .cl.is-active::after{opacity:0;}
@@ -1177,7 +1179,7 @@
     if (!window.matchMedia('(hover: none)').matches) return;
 
     // center "spotlight": activate one element at a time as it reaches mid-screen
-    const items = Array.from(document.querySelectorAll('.svc-row, .mcard, .client, .mod'));
+    const items = Array.from(document.querySelectorAll('.svc-row, .mcard, .client, .mod, .step'));
     if (items.length){
       let raf = null;
       function scan(){
