@@ -137,16 +137,77 @@
 
   /* ── hero (dark, centered) ───────────────────────────── */
   .hero{
-    position:relative;overflow:hidden;text-align:center;padding:88px 0 0;
+    position:relative;
+    overflow:hidden;
+    text-align:center;
+    padding:88px 0 0;
+
     background:
-      radial-gradient(ellipse 46% 34% at 50% 109%, rgba(255,86,150,.70), transparent 55%),
-      radial-gradient(ellipse 70% 50% at 50% 116%, rgba(150,72,250,.58), transparent 64%),
-      radial-gradient(ellipse 108% 70% at 50% -6%, rgba(86,64,224,.55), transparent 60%),
-      radial-gradient(ellipse 55% 48% at 14% 2%, rgba(138,46,196,.38), transparent 58%),
-      radial-gradient(ellipse 55% 48% at 86% 2%, rgba(86,56,222,.38), transparent 58%),
-      linear-gradient(180deg,#0a0820 0%,#160a44 44%,#0c1244 100%);
+
+      /* Leve glow no topo, atrás do menu, para suavizar o escuro */
+      radial-gradient(
+        ellipse 85% 40% at 50% 0%,
+        rgba(82,70,220,.22) 0%,
+        rgba(68,72,255,.10) 35%,
+        transparent 75%
+      ),
+
+      /* Glow principal sobre a área do dashboard */
+      radial-gradient(
+        ellipse 85% 65% at 50% 78%,
+        rgba(68,72,255,.60) 0%,
+        rgba(68,72,255,.30) 28%,
+        transparent 72%
+      ),
+
+      /* Bloom central inferior */
+      radial-gradient(
+        ellipse 120% 90% at 50% 65%,
+        rgba(42,31,122,.55) 0%,
+        rgba(21,19,94,.35) 38%,
+        transparent 75%
+      ),
+
+      /* Luz ambiente inferior esquerda */
+      radial-gradient(
+        ellipse 65% 55% at 15% 95%,
+        rgba(82,70,220,.28) 0%,
+        transparent 70%
+      ),
+
+      /* Luz ambiente inferior direita */
+      radial-gradient(
+        ellipse 65% 55% at 85% 95%,
+        rgba(82,70,220,.28) 0%,
+        transparent 70%
+      ),
+
+      /* Glow rosa na base para integrar com o dashboard */
+      radial-gradient(
+        ellipse 70% 40% at 50% 105%,
+        rgba(255,46,114,.25) 0%,
+        rgba(255,46,114,.10) 35%,
+        transparent 70%
+      ),
+
+      radial-gradient(
+        ellipse 90% 55% at 50% 108%,
+        rgba(82,70,220,.30) 0%,
+        transparent 75%
+      ),
+
+      /* Linear: topo (menu) bem escuro, base mais viva */
+      linear-gradient(
+        180deg,
+        #03051A 0%,
+        #060920 25%,
+        #0a0e36 60%,
+        #11134F 100%
+      );
   }
   .hero-stars{position:absolute;top:-90px;bottom:-90px;left:-12px;right:-12px;will-change:transform;background-image:linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px);background-size:46px 46px;opacity:.6;filter:blur(2px);-webkit-mask-image:radial-gradient(ellipse 80% 60% at 50% 28%,#000,transparent 72%);mask-image:radial-gradient(ellipse 80% 60% at 50% 28%,#000,transparent 72%);pointer-events:none;}
+  /* hero noise overlay (Linear/Stripe/Vercel/Arc style) */
+  .hero-noise{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;image-rendering:pixelated;mix-blend-mode:soft-light;opacity:.35;}
   .hero-inner{position:relative;z-index:2;max-width:880px;margin:0 auto;padding:40px 32px 0;}
   .hero-badge{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:.67rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.72);border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.05);padding:9px 18px;border-radius:999px;backdrop-filter:blur(6px);}
   .hero h1{font-family:var(--serif);font-weight:700;font-size:clamp(2.05rem,6vw,4.85rem);line-height:1.06;letter-spacing:-.02em;color:#efeaf7;margin:30px auto 24px;max-width:15ch;}
@@ -174,7 +235,25 @@
 
   /* hero dashboard preview */
   .hero-app-wrap{position:relative;max-width:1080px;margin:64px auto 0;padding:0 24px;max-height:440px;overflow:hidden;-webkit-mask-image:linear-gradient(180deg,#000 76%,transparent);mask-image:linear-gradient(180deg,#000 76%,transparent);}
-  .hero-app-glow{position:absolute;left:50%;top:-30px;transform:translateX(-50%);width:72%;height:260px;background:radial-gradient(ellipse at center,rgba(232,23,90,.55),transparent 70%);filter:blur(46px);pointer-events:none;}
+  .hero-app-glow{
+    position:absolute;
+    left:50%;
+    top:-60px;
+    transform:translateX(-50%);
+    width:95%;
+    height:420px;
+
+    background:
+      radial-gradient(
+        ellipse at center,
+        rgba(80,92,255,.28) 0%,
+        rgba(80,92,255,.14) 40%,
+        transparent 75%
+      );
+
+    filter:blur(90px);
+    pointer-events:none;
+  }
   .hero-app{position:relative;z-index:1;background:#fff;border:1px solid rgba(255,255,255,.4);border-radius:14px 14px 0 0;overflow:hidden;box-shadow:0 -8px 60px rgba(232,23,90,.1),0 34px 90px -24px rgba(0,0,0,.55);text-align:left;}
   .app-top{display:flex;align-items:center;gap:14px;padding:13px 18px;background:var(--ink);color:#fff;font-size:.78rem;}
   .app-top .bars{display:inline-flex;gap:3px;align-items:flex-end;}
@@ -579,6 +658,7 @@
 <!-- HERO -->
 <section class="hero" id="top">
   <div class="hero-stars" data-parallax="0.07"></div>
+  <canvas class="hero-noise" aria-hidden="true"></canvas>
   <div class="hero-inner">
     <div class="hero-badge hero-load">Automatizar · Monitorar · Decidir</div>
     <h1 class="hero-load">Auditoria contínua que trabalha com <em>dados</em>, não com amostragem</h1>
@@ -1266,6 +1346,56 @@
       if(t){ e.preventDefault(); t.scrollIntoView({behavior:'smooth'}); }
     });
   });
+
+  // Hero noise overlay (Linear/Stripe/Vercel/Arc style)
+  // patternRefreshInterval=3, patternAlpha=4, canvas: imageRendering pixelated, mix-blend soft-light, opacity .35
+  (function(){
+    const canvas = document.querySelector('.hero-noise');
+    if(!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const PATTERN_SIZE = 256;
+    const ALPHA = 4;            // patternAlpha
+    const REFRESH = 3;          // patternRefreshInterval
+    const pat = document.createElement('canvas');
+    pat.width = pat.height = PATTERN_SIZE;
+    const pctx = pat.getContext('2d');
+    function generatePattern(){
+      const id = pctx.createImageData(PATTERN_SIZE, PATTERN_SIZE);
+      const d = id.data;
+      for(let i=0; i<d.length; i+=4){
+        const v = (Math.random()*255)|0;
+        d[i]=v; d[i+1]=v; d[i+2]=v; d[i+3]=ALPHA;
+      }
+      pctx.putImageData(id, 0, 0);
+    }
+    function resize(){
+      const r = canvas.parentElement.getBoundingClientRect();
+      const w = Math.max(1, Math.floor(r.width));
+      const h = Math.max(1, Math.floor(r.height));
+      if(canvas.width !== w) canvas.width = w;
+      if(canvas.height !== h) canvas.height = h;
+    }
+    function render(){
+      const p = ctx.createPattern(pat, 'repeat');
+      ctx.fillStyle = p;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+    resize();
+    generatePattern();
+    render();
+    let resizeRaf = null;
+    window.addEventListener('resize', () => {
+      if(resizeRaf) return;
+      resizeRaf = requestAnimationFrame(() => { resize(); render(); resizeRaf = null; });
+    });
+    if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+      let f = 0;
+      (function loop(){
+        if(++f % REFRESH === 0){ generatePattern(); render(); }
+        requestAnimationFrame(loop);
+      })();
+    }
+  })();
 </script>
 </body>
 </html>
